@@ -48,7 +48,7 @@ const App = () => {
         <Row>
           <Col>
             <FormGroup>
-              <Label for="ms">Vitesse de téléchargement (m/s)</Label>
+              <Label for="ms">Vitesse de téléchargement (Mo/s)</Label>
               <Input
                 type="number"
                 name="ms"
