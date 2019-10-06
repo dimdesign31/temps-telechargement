@@ -2,7 +2,7 @@
   "name": "temps-telechargement",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://dimdesign.github.io/temps-telechargement",
+  "homepage": "https://dimdesign31.github.io/temps-telechargement",
   "dependencies": {
     "bootstrap": "^4.3.1",
     "gh-pages": "^2.1.1",
