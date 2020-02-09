@@ -1,9 +1,21 @@
-import React from "react";
-import { Container, Row, Col, Form, FormGroup, Label, Input } from "reactstrap";
+import React, { useState, useEffect } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  Button
+} from "reactstrap";
 import useForm from "./useForm";
 
 const App = () => {
   const { inputs, handleInputChange } = useForm();
+  const [isInProgress, setIsInProgress] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(null);
+  let timer;
 
   const secondsToHours = seconds => {
     if (!seconds) {
@@ -14,6 +26,36 @@ const App = () => {
 
     return date.toISOString().substr(11, 8);
   };
+
+  const startTimer = () => {
+    if (!remainingTime) {
+      setRemainingTime(getDownloadTimeInSecond());
+    }
+
+    setIsInProgress(true);
+  };
+
+  const resetTimer = () => {
+    clearInterval(timer);
+    setRemainingTime(null);
+  };
+
+  const updateTimer = () => {
+    setRemainingTime(remainingTime - 1);
+    clearInterval(timer);
+  };
+
+  const startInterval = () => {
+    timer = setInterval(updateTimer, 1000);
+  };
+
+  useEffect(() => {
+    if (isInProgress && remainingTime && !timer) {
+      startInterval();
+    }
+  });
+
+  const getDownloadTimeInSecond = () => inputs.mo / inputs.ms;
 
   return (
     <Container>
@@ -69,7 +111,7 @@ const App = () => {
                 name="ds"
                 id="ds"
                 disabled
-                value={inputs.ms && inputs.mo / inputs.ms}
+                value={inputs.ms && getDownloadTimeInSecond()}
               />
             </FormGroup>
           </Col>
@@ -81,9 +123,36 @@ const App = () => {
                 name="dh"
                 id="dh"
                 disabled
-                value={inputs.ms && secondsToHours(inputs.mo / inputs.ms)}
+                value={inputs.ms && secondsToHours(getDownloadTimeInSecond())}
               />
             </FormGroup>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            {!isInProgress && (
+              <Button color="primary" onClick={() => startTimer()}>
+                {!remainingTime ? "Démarrer" : "Reprendre"}
+              </Button>
+            )}
+            {isInProgress && (
+              <Button color="danger" onClick={() => setIsInProgress(false)}>
+                Pause
+              </Button>
+            )}
+            {remainingTime && !isInProgress && (
+              <Button color="secondary" onClick={() => resetTimer()}>
+                Réinitialiser
+              </Button>
+            )}
+          </Col>
+          <Col>
+            {remainingTime && (
+              <span>
+                Temps restant : {remainingTime}s |{" "}
+                {secondsToHours(remainingTime)}h
+              </span>
+            )}
           </Col>
         </Row>
       </Form>
